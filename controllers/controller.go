@@ -17,6 +17,22 @@ func GetAlunos(c *gin.Context) {
 	c.JSON(200, alunos)
 }
 
+func GetAlunoId(c *gin.Context) {
+	var aluno models.Aluno
+
+	id := c.Params.ByName("id")
+
+	database.DB.First(&aluno, id)
+
+	if aluno.ID == 0 {
+		c.JSON(http.StatusNotFound, gin.H{
+			"Not found": "Aluno não encontrado"})
+		return
+	}
+
+	c.JSON(http.StatusOK, aluno)
+}
+
 func Saudation(c *gin.Context) {
 	nome := c.Params.ByName("nome")
 	c.JSON(200, gin.H{
