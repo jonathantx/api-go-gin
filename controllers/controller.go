@@ -57,7 +57,15 @@ func EditAluno(c *gin.Context) {
 		return
 	}
 
-	database.DB.Model(&aluno).UpdateColumns(aluno)
+	// Validation
+
+	if err := models.ValidateData(&aluno); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error()})
+		return
+	}
+
+	database.DB.Save(&aluno)
 
 	c.JSON(http.StatusOK, aluno)
 }
@@ -89,6 +97,14 @@ func CreatNewAluno(c *gin.Context) {
 	var aluno models.Aluno
 
 	if err := c.ShouldBindJSON(&aluno); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error()})
+		return
+	}
+
+	// Validation
+
+	if err := models.ValidateData(&aluno); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": err.Error()})
 		return
